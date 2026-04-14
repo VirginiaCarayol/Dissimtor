@@ -2,7 +2,7 @@
 
 import argparse
 
-parser=argparse.ArgumentParser(prog='Training_ann_dissimtor',description='Create an artificial neural network (ANN) for specific HLA-I allele.')
+parser = argparse.ArgumentParser(prog='Training_ann_dissimtor', description='Create an artificial neural network (ANN) for specific HLA-I allele.')
 parser.add_argument(type=str, help="HLA-I allele for which you want to create an artificial neural network (ANN).", dest='allele')
 parser.add_argument("--show-hyperparameter-skf", help="For the best hyperparameters chosen by the author, show the stratified k-fold (SKF) cross-validation.",
                     action="store_true", dest="show_hyperparameter_skf")
@@ -11,12 +11,12 @@ parser.add_argument("--show-plots", help="Show plots of curves of loss vs. epoch
 parser.add_argument("--save-test-subset", help="Save the test subset (which has not been used to create and train the saved model).", 
                     action="store_true", dest="save_test_subset")
 
-args=parser.parse_args()
+args = parser.parse_args()
 
-allele=args.allele
-show_plots=args.show_plots
-show_hyperparameter_skf=args.show_hyperparameter_skf
-save_test_subset=args.save_test_subset
+allele = args.allele
+show_plots = args.show_plots
+show_hyperparameter_skf = args.show_hyperparameter_skf
+save_test_subset = args.save_test_subset
 
 print("Importing modules...")
 from matplotlib import pyplot as plt
@@ -38,7 +38,7 @@ warnings.filterwarnings('ignore')
 #   results due to floating-point round-off errors from different computation
 #   orders. To turn them off, set the environment variable
 #   `TF_ENABLE_ONEDNN_OPTS=0`. 
-os.environ["TF_ENABLE_ONEDNN_OPTS"]="0"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
 import tensorflow as tf
 
@@ -46,39 +46,39 @@ print("Modules imported.")
 
 # Construct the name of the file expected to contain the data related to the 
 # specified allele ('binders').
-file_allele=os.path.join("datasets", f"{allele}_iedb_netmhc_binder.txt")
+file_allele = os.path.join("datasets", f"{allele}_iedb_netmhc_binder.txt")
 
-hla_I=pd.read_csv(file_allele, sep=" ")
+hla_I = pd.read_csv(file_allele, sep=" ")
 
 # Similar to the previous step, another file called 'random_nmers.txt' is read
 # ('non binders').
-random=pd.read_csv(os.path.join("datasets", "random_nmers.txt"))
+random = pd.read_csv(os.path.join("datasets", "random_nmers.txt"))
 
 # Prepare training datasets: amino acid transformation using BLOSUM50.
-A="5,-2,-1,-2,-1,-1,-1,0,-2,-1,-2,-1,-1,-3,-1,1,0,-3,-2,0,"
-R="-2,7,-1,-2,-4,1,0,-3,0,-4,-3,3,-2,-3,-3,-1,-1,-3,-1,-3,"
-N="-1,-1,7,2,-2,0,0,0,1,-3,-4,0,-2,-4,-2,1,0,-4,-2,-3,"
-D="-2,-2,2,8,-4,0,2,-1,-1,-4,-4,-1,-4,-5,-1,0,-1,-5,-3,-4,"
-C="-1,-4,-2,-4,13,-3,-3,-3,-3,-2,-2,-3,-2,-2,-4,-1,-1,-5,-3,-1,"
-Q="-1,1,0,0,-3,7,2,-2,1,-3,-2,2,0,-4,-1,0,-1,-1,-1,-3,"
-E="-1,0,0,2,-3,2,6,-3,0,-4,-3,1,-2,-3,-1,-1,-1,-3,-2,-3,"
-G="0,-3,0,-1,-3,-2,-3,8,-2,-4,-4,-2,-3,-4,-2,0,-2,-3,-3,-4,"
-H="-2,0,1,-1,-3,1,0,-2,10,-4,-3,0,-1,-1,-2,-1,-2,-3,2,-4,"
-I="-1,-4,-3,-4,-2,-3,-4,-4,-4,5,2,-3,2,0,-3,-3,-1,-3,-1,4,"
-L="-2,-3,-4,-4,-2,-2,-3,-4,-3,2,5,-3,3,1,-4,-3,-1,-2,-1,1,"
-K="-1,3,0,-1,-3,2,1,-2,0,-3,-3,6,-2,-4,-1,0,-1,-3,-2,-3,"
-M="-1,-2,-2,-4,-2,0,-2,-3,-1,2,3,-2,7,0,-3,-2,-1,-1,0,1,"
-F="-3,-3,-4,-5,-2,-4,-3,-4,-1,0,1,-4,0,8,-4,-3,-2,1,4,-1,"
-P="-1,-3,-2,-1,-4,-1,-1,-2,-2,-3,-4,-1,-3,-4,10,-1,-1,-4,-3,-3,"
-S="1,-1,1,0,-1,0,-1,0,-1,-3,-3,0,-2,-3,-1,5,2,-4,-2,-2,"
-T="0,-1,0,-1,-1,-1,-1,-2,-2,-1,-1,-1,-1,-2,-1,2,5,-3,-2,0,"
-W="-3,-3,-4,-5,-5,-1,-3,-3,-3,-3,-2,-3,-1,1,-4,-4,-3,15,2,-3,"
-Y="-2,-1,-2,-3,-3,-1,-2,-3,2,-1,-1,-2,0,4,-3,-2,-2,2,8,-1,"
-V="0,-3,-3,-4,-1,-3,-3,-4,-4,4,1,-3,1,-1,-3,-2,0,-3,-1,5,"
-X="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
+A = "5,-2,-1,-2,-1,-1,-1,0,-2,-1,-2,-1,-1,-3,-1,1,0,-3,-2,0,"
+R = "-2,7,-1,-2,-4,1,0,-3,0,-4,-3,3,-2,-3,-3,-1,-1,-3,-1,-3,"
+N = "-1,-1,7,2,-2,0,0,0,1,-3,-4,0,-2,-4,-2,1,0,-4,-2,-3,"
+D = "-2,-2,2,8,-4,0,2,-1,-1,-4,-4,-1,-4,-5,-1,0,-1,-5,-3,-4,"
+C = "-1,-4,-2,-4,13,-3,-3,-3,-3,-2,-2,-3,-2,-2,-4,-1,-1,-5,-3,-1,"
+Q = "-1,1,0,0,-3,7,2,-2,1,-3,-2,2,0,-4,-1,0,-1,-1,-1,-3,"
+E = "-1,0,0,2,-3,2,6,-3,0,-4,-3,1,-2,-3,-1,-1,-1,-3,-2,-3,"
+G = "0,-3,0,-1,-3,-2,-3,8,-2,-4,-4,-2,-3,-4,-2,0,-2,-3,-3,-4,"
+H = "-2,0,1,-1,-3,1,0,-2,10,-4,-3,0,-1,-1,-2,-1,-2,-3,2,-4,"
+I = "-1,-4,-3,-4,-2,-3,-4,-4,-4,5,2,-3,2,0,-3,-3,-1,-3,-1,4,"
+L = "-2,-3,-4,-4,-2,-2,-3,-4,-3,2,5,-3,3,1,-4,-3,-1,-2,-1,1,"
+K = "-1,3,0,-1,-3,2,1,-2,0,-3,-3,6,-2,-4,-1,0,-1,-3,-2,-3,"
+M = "-1,-2,-2,-4,-2,0,-2,-3,-1,2,3,-2,7,0,-3,-2,-1,-1,0,1,"
+F = "-3,-3,-4,-5,-2,-4,-3,-4,-1,0,1,-4,0,8,-4,-3,-2,1,4,-1,"
+P = "-1,-3,-2,-1,-4,-1,-1,-2,-2,-3,-4,-1,-3,-4,10,-1,-1,-4,-3,-3,"
+S = "1,-1,1,0,-1,0,-1,0,-1,-3,-3,0,-2,-3,-1,5,2,-4,-2,-2,"
+T = "0,-1,0,-1,-1,-1,-1,-2,-2,-1,-1,-1,-1,-2,-1,2,5,-3,-2,0,"
+W = "-3,-3,-4,-5,-5,-1,-3,-3,-3,-3,-2,-3,-1,1,-4,-4,-3,15,2,-3,"
+Y = "-2,-1,-2,-3,-3,-1,-2,-3,2,-1,-1,-2,0,4,-3,-2,-2,2,8,-1,"
+V = "0,-3,-3,-4,-1,-3,-3,-4,-4,4,1,-3,1,-1,-3,-2,0,-3,-1,5,"
+X = "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"
 
 ## Binders: 
-hla_Idf=pd.DataFrame(hla_I, columns=[allele])
+hla_Idf = pd.DataFrame(hla_I, columns=[allele])
 
 for (character, aminoacid) in [("A", A),
                                ("R", R),
@@ -101,29 +101,29 @@ for (character, aminoacid) in [("A", A),
                                ("Y", Y),
                                ("V", V),
                                ("X", X)]:
-   hla_Idf[allele]=hla_Idf[allele].str.replace(character, aminoacid)
+   hla_Idf[allele] = hla_Idf[allele].str.replace(character, aminoacid)
 
 # Remake the dataframe so each amino acid has it's values split into separate
 # columns.
-hla_Idf=hla_Idf[allele].str.split(',', expand=True)
+hla_Idf = hla_Idf[allele].str.split(',', expand=True)
 
 # Add a column, called 'Binder' with value 1 for all rows (all these peptides 
 # bind to that HLA-I allele).
-hla_Idf['Binder']=1
+hla_Idf['Binder'] = 1
 
 # Calculate the number of rows in hla_Idf and multiply it by 10 to determine how
 # many samples select from the 'random' dataframe.
-count_HLArandom=hla_Idf.shape[0] * 10
+count_HLArandom = hla_Idf.shape[0] * 10
 
 ## Non binders:
-randomdf=pd.DataFrame(random, columns=['Random'])
+randomdf = pd.DataFrame(random, columns=['Random'])
 
 # Shuffle the rows of 'randomdf'.
-randomdf=randomdf.sample(frac=1, random_state=42)
+randomdf = randomdf.sample(frac=1, random_state=42)
 
 # Randomly select 'n' samples from randomdf, where 'n' is 10 times the number of 
 # rows in hla_Idf:
-randomdf=randomdf.sample(n=count_HLArandom)
+randomdf = randomdf.sample(n=count_HLArandom)
 
 # Amino acid transformation using BLOSUM50.
 for (character, aminoacid) in [("A", A),
@@ -147,29 +147,29 @@ for (character, aminoacid) in [("A", A),
                                ("Y", Y),
                                ("V", V),
                                ("X", X)]:
-  randomdf['Random']=randomdf['Random'].str.replace(character, aminoacid)
+  randomdf['Random'] = randomdf['Random'].str.replace(character, aminoacid)
 
 # Remake the dataframe so each amino acid has it's values split into separate
 # columns.
-randomdf=randomdf['Random'].str.split(',', expand=True)
+randomdf = randomdf['Random'].str.split(',', expand=True)
 
 # Add a column, called 'Binder' with value 0 for all rows (all these peptides do not
 # bind to that HLA-I allele).
-randomdf['Binder']=0
+randomdf['Binder'] = 0
 
 ## Choosing the best hyperparameters for the machine learning model.
 
 # The previous dataframes are concatenated, forming the training set 'train_df'.
-train_df=pd.concat([hla_Idf,randomdf])
+train_df = pd.concat([hla_Idf,randomdf])
 
 # Some modifications of the dataset:
 # Remove the last column because it's always empty. This is because the amino acids
 # have trailing commas.
-train_df=train_df.drop(columns=[180])  
+train_df = train_df.drop(columns=[180])  
 # Rename the columns by prefixing them with "P".
-train_df.columns=[f"P{str(i)}" for i in train_df.columns]  
-train_df=train_df.apply(pd.to_numeric)  
-train_df=train_df.sample(frac=1, random_state=42)  
+train_df.columns = [f"P{str(i)}" for i in train_df.columns]  
+train_df = train_df.apply(pd.to_numeric)  
+train_df = train_df.sample(frac=1, random_state=42)  
 
 # Split the dataset into three subsets: 'train', 'validation' and 'test'.
 
@@ -221,7 +221,7 @@ train_df=train_df.sample(frac=1, random_state=42)
 # training-validation and test set in a random and stratified manner (maintaining
 # the class proportions in both datasets). 
 
-train_validation_df1, test_df1=train_test_split(
+train_validation_df1, test_df1 = train_test_split(
     train_df,
     test_size=0.2,
     stratify=train_df['PBinder'],
@@ -231,15 +231,15 @@ train_validation_df1, test_df1=train_test_split(
 ## STEPS 2-7.
 
 # Parameters.
-rd=42
-partitions=10 
+rd = 42
+partitions = 10 
 
 # Perform the stratified partition with the StratifiedKFold() function.
-skf=StratifiedKFold(n_splits=partitions, shuffle=True, random_state=rd)
+skf = StratifiedKFold(n_splits=partitions, shuffle=True, random_state=rd)
 
 # Save the input (features, variables or characteristics) and output (class or label) 
 # in two variables, called 'x_skf' and 'y_skf', respectively:
-x_skf, y_skf=train_validation_df1.iloc[:,0:180], train_validation_df1['PBinder']
+x_skf, y_skf = train_validation_df1.iloc[:,0:180], train_validation_df1['PBinder']
 
 for train, validation in skf.split(x_skf, y_skf):
   x_train_skf, x_validation_skf, y_train_skf, y_validation_skf=x_skf.iloc[train], x_skf.iloc[validation], y_skf.iloc[train], y_skf.iloc[validation]
@@ -249,7 +249,7 @@ for train, validation in skf.split(x_skf, y_skf):
 
 def create_model(learning_rate):
     """Function to create an artificial neural network using tensorflow."""
-    model=tf.keras.models.Sequential()
+    model = tf.keras.models.Sequential()
     model.add(tf.keras.layers.Dense(10, activation='relu', name='Hidden1'))
     model.add(tf.keras.layers.Dense(10, activation='relu', name='Hidden2'))
     model.add(tf.keras.layers.Dense(1, name='Output'))
@@ -262,12 +262,12 @@ def create_model(learning_rate):
 
 def train_model(model, x, y, epochs, batch_size):
   """Function to train the model."""
-  history=model.fit(x=x,
+  history = model.fit(x=x,
                     y=y,
                     batch_size=batch_size,
                     epochs=epochs)
   # The list of epochs is stored separately from the rest of history.
-  epochs=history.epoch
+  epochs = history.epoch
   return epochs, history
 
 def plot_the_loss_curve(epochs, mae_training, mae_validation):
@@ -278,20 +278,20 @@ def plot_the_loss_curve(epochs, mae_training, mae_validation):
   plt.plot(epochs[1:], mae_training[1:], label="Training loss")
   plt.plot(epochs[1:], mae_validation[1:], label="Validation loss")
   plt.legend()
-  merged_mae_lists=mae_training[1:] + mae_validation[1:]
-  highest_loss=max(merged_mae_lists)
-  lowest_loss=min(merged_mae_lists)
-  delta=highest_loss - lowest_loss
+  merged_mae_lists = mae_training[1:] + mae_validation[1:]
+  highest_loss = max(merged_mae_lists)
+  lowest_loss = min(merged_mae_lists)
+  delta = highest_loss - lowest_loss
   print(delta)
-  top_of_y_axis=highest_loss + (delta * 0.05)
-  bottom_of_y_axis=lowest_loss - (delta * 0.05)
+  top_of_y_axis = highest_loss + (delta * 0.05)
+  bottom_of_y_axis = lowest_loss - (delta * 0.05)
   plt.ylim([bottom_of_y_axis, top_of_y_axis])
   plt.show()
 
 # Best hyperparameters chosen by the author:
-LR=0.01  # Learning rate
-BS=1000  # Batch size
-EPOCHS=50 
+LR = 0.01  # Learning rate
+BS = 1000  # Batch size
+EPOCHS = 50 
 
 # Store the MSE of each subpartition (from both the training and validation subset), 
 # calculate the mean and standard deviation of the MSE and display these results.
@@ -299,28 +299,28 @@ EPOCHS=50
 if show_hyperparameter_skf:
   print("Doing stratified k-fold cross-validation with the best hyperparameters chosen by the author...")
   # List to store the results of each partition.
-  mse_val=[]
-  mse_train=[]
+  mse_val = []
+  mse_train = []
 
   # Stratified k-fold cross-validation loop:
   for train_index, val_index in skf.split(x_skf, y_skf):
-      x_train, x_val=x_skf.iloc[train_index], x_skf.iloc[val_index]
-      y_train, y_val=y_skf.iloc[train_index], y_skf.iloc[val_index]
+      x_train, x_val = x_skf.iloc[train_index], x_skf.iloc[val_index]
+      y_train, y_val = y_skf.iloc[train_index], y_skf.iloc[val_index]
 
       # Create and train the model with the hyperparameters defined above.
-      model=create_model(LR)
-      history=model.fit(x=x_train, y=y_train, epochs=EPOCHS, batch_size=BS, shuffle=True,
+      model = create_model(LR)
+      history = model.fit(x=x_train, y=y_train, epochs=EPOCHS, batch_size=BS, shuffle=True,
                           validation_data=(x_val, y_val))
 
-      training_mse=history.history['mean_squared_error']
-      validation_mse=history.history['val_mean_squared_error']
+      training_mse = history.history['mean_squared_error']
+      validation_mse = history.history['val_mean_squared_error']
 
       if show_plots:
         plot_the_loss_curve(history.epoch, training_mse, validation_mse)
 
       # Get the MSE on the training and validation set of the current partition.
-      train_mse=training_mse[-1]
-      val_mse=validation_mse[-1]
+      train_mse = training_mse[-1]
+      val_mse = validation_mse[-1]
 
       # Save the results (MSE on training and validation set) of all partitions.
       mse_train.append(train_mse)
@@ -328,11 +328,11 @@ if show_hyperparameter_skf:
 
   # Calculate the mean and standard deviation of the MSE of the training and validation 
   # set in the K models:
-  mean_mse_train=np.mean(mse_train)
-  std_mse_train=np.std(mse_train)
+  mean_mse_train = np.mean(mse_train)
+  std_mse_train = np.std(mse_train)
 
-  mean_mse_val=np.mean(mse_val)
-  std_mse_val=np.std(mse_val)
+  mean_mse_val = np.mean(mse_val)
+  std_mse_val = np.std(mse_val)
 
   print("Results of the stratified k-fold cross-validation with the best hyperparameters chosen by the author:")
 
@@ -371,19 +371,19 @@ print("Creating and training the model (artificial neural network (ANN))...")
 
 # Training set: save the input ('features', variables or characteristics) and output (class, 
 # label or 'label') in two variables, called 'x_skf' and 'y_skf', respectively:
-x_skf, y_skf=train_validation_df1.iloc[:,0:180], train_validation_df1['PBinder']
+x_skf, y_skf = train_validation_df1.iloc[:,0:180], train_validation_df1['PBinder']
 
-model=create_model(LR)
+model = create_model(LR)
 
-epochs, history=train_model(model=model, x=x_skf, y=y_skf, epochs=EPOCHS, batch_size=BS)
+epochs, history = train_model(model=model, x=x_skf, y=y_skf, epochs=EPOCHS, batch_size=BS)
 
 print("Evaluating the model in the test set...")
 
 # Test set: save the input ('features', variables or characteristics) and output (class, label
 # or 'label') in two variables, called 'x_test_skf' and 'y_test_skf', respectively:
-x_test_skf, y_test_skf=test_df1.iloc[:,0:180], test_df1['PBinder']
+x_test_skf, y_test_skf = test_df1.iloc[:,0:180], test_df1['PBinder']
 
-test_loss, test_mse=model.evaluate(x_test_skf, y_test_skf, batch_size=BS)
+test_loss, test_mse = model.evaluate(x_test_skf, y_test_skf, batch_size=BS)
 
 print(f"Test loss: {test_loss}")
 print(f"Test MSE: {test_mse}")
@@ -394,28 +394,28 @@ if save_test_subset:
   test_df1.to_csv(test_filename, index=False)
 
 # Get the predictions for the test set:
-y_pred=model.predict(x_test_skf)
+y_pred = model.predict(x_test_skf)
 
 # Convert the predicted scores to binary labels: we have to choose a threshold
 # from which the classifier is forced to make the prediction as a "positive class" 
 # (in this case, binder) whenever its confidence is greater than said threshold. 
 # 'threshold = 0.75'
-y_pred_binary=np.where(y_pred > 0.75, 1, 0)
+y_pred_binary = np.where(y_pred > 0.75, 1, 0)
 
 # Create a dataframe with the real and predictions labels.
-df_pred=pd.DataFrame({'y_pred': np.array(y_pred).flatten(), 'label_test': np.array(y_test_skf).flatten()})
+df_pred = pd.DataFrame({'y_pred': np.array(y_pred).flatten(), 'label_test': np.array(y_test_skf).flatten()})
 
 # Confusion matrix:
-confusion_SFK=tf.math.confusion_matrix(y_test_skf, y_pred_binary, num_classes=2)
+confusion_SFK = tf.math.confusion_matrix(y_test_skf, y_pred_binary, num_classes=2)
 
-TN_SKF=confusion_SFK[0,0]  # True negatives
-FP_SFK=confusion_SFK[0,1]  # False positives
-FN_SFK=confusion_SFK[1,0]  # False negatives
-TP_SFK=confusion_SFK[1,1]  # True positives
+TN_SKF = confusion_SFK[0,0]  # True negatives
+FP_SFK = confusion_SFK[0,1]  # False positives
+FN_SFK = confusion_SFK[1,0]  # False negatives
+TP_SFK = confusion_SFK[1,1]  # True positives
 
 # False positive rate (FPR) and false negative rate (FNR).
-FPR_SFK=FP_SFK / (FP_SFK + TN_SKF)
-FNR_SFK=FN_SFK / (FN_SFK + TP_SFK)
+FPR_SFK = FP_SFK / (FP_SFK + TN_SKF)
+FNR_SFK = FN_SFK / (FN_SFK + TP_SFK)
 
 print(confusion_SFK)
 print(f"TN_SFK: {TN_SKF}, FP_SFK: {FP_SFK}, FN_SFK: {FN_SFK}, TP_SFK: {TP_SFK}")
@@ -426,14 +426,14 @@ print(sklearn.metrics.classification_report(y_test_skf, y_pred_binary, output_di
 
 # ROC curve and AUC. 
 # Calculate the scores representing the affinity of a peptide for a specific HLA-I allele.
-y_pred_prob=model.predict(x_test_skf).flatten()
+y_pred_prob = model.predict(x_test_skf).flatten()
 
 # Get the ROC curve values. roc_curve() function of scikit-learn get the true positive 
 # and false positive rates at all thresholds.
 fpr, tpr, thresholds=roc_curve(y_test_skf, y_pred_prob)
 
 # Calculate the AUC:
-auc_value=auc(fpr, tpr)
+auc_value = auc(fpr, tpr)
 print(f"AUC: {auc_value}")
 
 print("Saving the results...")
